@@ -4,10 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from typing import Any, Dict, List, Callable, Type
 
-def validate_data(data: Dict[str, Any], format: Type[serializers.Serializer]) -> bool:
-    serializer = format(data=data)
-    return serializer.is_valid()
-
 def success_response(data: Dict[str, Any]|List[Dict[str, Any]]) -> Response:
     return Response({
         'status': 'success',
