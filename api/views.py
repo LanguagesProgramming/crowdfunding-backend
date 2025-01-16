@@ -1,3 +1,4 @@
+from typing import Optional
 from core.user.services import UserService
 from core.campaign.services import CampaignService
 from core.campaign.category import CampaignCategory
@@ -44,9 +45,8 @@ class UserApi(APIView):
 
 
 class CampaignApi(APIView):
-    @validate()
-    def get(self, name: str, category: str):
-        campaigns = campaign_service.filter_campaigns(name, CampaignCategory(category))
+    def get(self, name: Optional[str], category: Optional[CampaignCategory]):
+        campaigns = campaign_service.filter_campaigns(name, category)
         data = [asdict(campaign) for campaign in campaigns]
         return success_response(data)
     
