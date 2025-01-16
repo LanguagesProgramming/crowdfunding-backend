@@ -30,11 +30,12 @@ class Campaign:
         return
     
     def add_image(self, image: str) -> None:
-        #TODO
+        Base64SaveStorageImage.verify_base64(cls, image)
+        Base64SaveStorageImage.save(self, image, "Imagenes")
         return
     
     def delete_image(self, image: str) -> None:
-        #TODO
+        DeleteStorageImage.delete(self, image)
         return
 
     def is_same_category(self, category: CampaignCategory) -> bool:
