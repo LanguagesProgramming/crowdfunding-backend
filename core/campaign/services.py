@@ -1,3 +1,4 @@
+from typing import Optional
 from core.common.events import EventPublisher
 from core.common.repository import DeleteModel, GetModel
 from .campaign import Campaign
@@ -25,9 +26,15 @@ class CampaignService:
         self.__delete_campaign.delete(campaign_id)
         return self.__mapper.to_dto(campaign)
 
-    def filter_campaigns(self, title: str, category: CampaignCategory) -> list[CampaignDto]:
-        campaigns = self.__get_campaign.get_all()
-        #TODO
+    def filter_campaigns(self, title: Optional[str], category: Optional[CampaignCategory]) -> list[CampaignDto]:
+        campaigns = self.__get_campaign.get_all() 
+
+        if category != None:
+            campaigns = [campaign for campaign in campaigns if campaign.is_same_category(category)]
+
+        if title != None:
+            campaigns = [campaign for campaign in campaigns if campaign.matches_title(title)]
+
         return [self.__mapper.to_dto(campaign) for campaign in campaigns]
     
     def change_campaign_data(self, dto: ChangeCampaignDto) -> CampaignDto:
@@ -38,7 +45,7 @@ class CampaignService:
     
     def change_product_data(self, dto: ChangeProductDto) -> ProductDto:
         product = self.__get_product.get(dto.product_id)
-        product.change_data(dto.name, dto.price, dto.discoint)
+        product.change_data(dto.name, dto.price, dto.discount)
         EventPublisher.publish()
         return self.__product_mapper.to_dto(product)
     

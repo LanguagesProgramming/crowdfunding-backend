@@ -7,7 +7,8 @@ from decimal import Decimal
 class CreateProductDto:
     name: str
     price: Decimal
-    discoint: Decimal
+    discount: Decimal
+    campaign_id: str
     images: List[str]
   
     
@@ -16,7 +17,8 @@ class ProductDto:
     product_id: str
     name: str
     price: Decimal
-    discoint: Decimal
+    discount: Decimal
+    campaign_id: str
     images: List[str]
     
        
@@ -27,6 +29,7 @@ class CreateCampaignDto:
     category: CampaignCategory
     description: str
     product: CreateProductDto
+    goal: Decimal
     images: List[str]
 
 
@@ -46,6 +49,8 @@ class CampaignDto:
     category: CampaignCategory
     description: str
     product: ProductDto
+    goal: Decimal
+    current_money: Decimal
     images: List[str]
 
 
@@ -54,4 +59,4 @@ class ChangeProductDto:
     product_id: str
     name: Optional[str]
     price: Optional[Decimal]
-    discoint: Optional[Decimal]
+    discount: Optional[Decimal]
