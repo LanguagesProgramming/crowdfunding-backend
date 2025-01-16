@@ -45,8 +45,11 @@ class Campaign:
     
     @classmethod
     def create(cls, userId: str, title: str, category: CampaignCategory, description: str, product: Product, goal: Decimal, images: List[str]) -> 'Campaign':
-        campaign = cls(ID.generate(), userId, title, category, description, product, goal, Decimal(0), images)
+        id = ID.generate()
+        product.campaignId = id
+        campaign = cls(id, userId, title, category, description, product, goal, Decimal(0), images)
         EventPublisher.add_event(ModelCreatedEvent[Campaign](campaign))
+        EventPublisher.add_event(ModelCreatedEvent[Product](product))
         return campaign
     
     @classmethod

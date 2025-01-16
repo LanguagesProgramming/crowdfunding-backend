@@ -28,9 +28,8 @@ class Product:
         return
     
     @classmethod
-    def create(cls, name: str, price: Decimal, discount: Decimal, campaignId: str, images: List[str]) -> 'Product':
-        product: Product = cls(ID.generate(), name, price, discount, campaignId, images) 
-        EventPublisher.add_event(ModelCreatedEvent[Product](product))
+    def create(cls, name: str, price: Decimal, discount: Decimal, images: List[str]) -> 'Product':
+        product: Product = cls(ID.generate(), name, price, discount, None, images) 
         return product
 
     @classmethod

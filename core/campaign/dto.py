@@ -8,7 +8,6 @@ class CreateProductDto:
     name: str
     price: Decimal
     discount: Decimal
-    campaign_id: str
     images: List[str]
   
     
@@ -18,6 +17,7 @@ class ProductDto:
     name: str
     price: Decimal
     discount: Decimal
+    campaign_id: str
     images: List[str]
     
        
