@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 class ProductMapper:
     def to_product(self, data: Dict[str, Any]) -> Product:
-        product: Product = Product.create(dto.name,dto.price, dto.discount, dto.campaign_id, dto.images)
+        product: Product = Product.create(**data)
         return product
 
     def to_dto(self, product: Product) -> ProductDto:
@@ -15,7 +15,7 @@ class ProductMapper:
 
 class CampaignMapper:
     def to_campaign(self, dto: CreateCampaignDto) -> Campaign:
-        campaign: Campaign = Campaign.create(dto.user_id, dto.title, dto.category, dto.description, ProductMapper().to_product(dto.product) , dto.goal, dto.images)
+        campaign: Campaign = Campaign.create(dto.user_id, dto.title, dto.category, dto.description, ProductMapper().to_product(dto.product), dto.goal, dto.images)
         return campaign
 
     def to_dto(self, campaign: Campaign) -> CampaignDto:

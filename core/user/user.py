@@ -1,13 +1,18 @@
 from core.common.events import EventPublisher, ModelCreatedEvent, ModelModifiedEvent
 from core.campaign.campaign import Campaign
+from core.common.values import ID
 from .events import DonateEvent, BuyEvent
-from typing import Optional
+from typing import List, Optional
 from decimal import Decimal
 
 class User:
-    def __init__(self) -> None:
-        #TODO
-        pass
+    def __init__(self, user_id: str, email: str, name: str, password: str, phone_number: str, campaigns: List[Campaign]) -> None:
+        self.user_id = user_id
+        self.email = email
+        self.name = name
+        self.password = password
+        self.phone_number = phone_number
+        self.campaigns = campaigns
     
     def change_data(self, email: Optional[str], name: Optional[str], password: Optional[str],
                     phone_number: Optional[str]) -> None:
@@ -30,14 +35,14 @@ class User:
         return
     
     @classmethod
-    def create(cls) -> 'User':
-        #TODO
-        user : User
+    def create(cls, email: str, name: str, password: str, phone_number: str) -> 'User':
+        user: User = cls(ID.generate(), email, name, password, phone_number, [])
         EventPublisher.add_event(ModelCreatedEvent[User](user))
         return user
     
     @classmethod
-    def load(cls) -> 'User':
+    def load(cls, user_id: str, email: str, name: str, password: str, phone_number: str, campaigns: List[Campaign]) -> 'User':
         #TODO
+        user: User = cls(user_id, email, name, password, phone_number, campaigns)
         user : User
         return user

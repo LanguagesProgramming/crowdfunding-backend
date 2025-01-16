@@ -45,7 +45,7 @@ class UserApi(APIView):
 
 
 class CampaignApi(APIView):
-    def get(self, name: Optional[str], category: Optional[CampaignCategory]):
+    def get(self, name: str, category: CampaignCategory):
         campaigns = campaign_service.filter_campaigns(name, category)
         data = [asdict(campaign) for campaign in campaigns]
         return success_response(data)
