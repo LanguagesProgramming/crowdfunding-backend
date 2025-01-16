@@ -43,7 +43,7 @@ def validate(format: Type[serializers.Serializer] = None) -> Callable:
                     return func(self, request)
             except SystemException as e:
                 return failure_response(str(e))
-            except:
-                return internal_server_error_response()
+            #except:
+                #return internal_server_error_response()
         return wrapper
     return decorator

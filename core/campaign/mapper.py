@@ -1,9 +1,10 @@
 from .campaign import Campaign
 from .product import Product
 from .dto import CreateCampaignDto, CampaignDto, CreateProductDto, ProductDto
+from typing import Dict, Any
 
 class ProductMapper:
-    def to_product(self, dto: CreateProductDto) -> Product:
+    def to_product(self, data: Dict[str, Any]) -> Product:
         product: Product = Product.create(dto.name,dto.price, dto.discount, dto.campaign_id, dto.images)
         return product
 
