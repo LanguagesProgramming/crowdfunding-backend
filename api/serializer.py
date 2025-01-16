@@ -19,16 +19,17 @@ class ChangeUserSerializer(serializers.Serializer):
 class CreateProductSerializer(serializers.Serializer):
     name = serializers.CharField()
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
-    discoint = serializers.DecimalField(max_digits=10, decimal_places=2)
+    discount = serializers.DecimalField(max_digits=10, decimal_places=2)
     images = serializers.ListField(child=serializers.CharField())
     
     
 class CreateCampaignSerializer(serializers.Serializer):
-    user_id = serializers.UUIDField()
+    user_id = serializers.CharField()
     title = serializers.CharField()
     category = serializers.ChoiceField(choices=[(category.name, category.value) for category in CampaignCategory])
     description = serializers.CharField()
     product = CreateProductSerializer()
+    goal = serializers.DecimalField(max_digits=10, decimal_places=2)
     images = serializers.ListField(child=serializers.CharField())
     
     
