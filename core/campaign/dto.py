@@ -9,8 +9,17 @@ class CreateProductDto:
     price: Decimal
     discoint: Decimal
     images: List[str]
+  
     
+@dataclass
+class ProductDto:
+    product_id: str
+    name: str
+    price: Decimal
+    discoint: Decimal
+    images: List[str]
     
+       
 @dataclass
 class CreateCampaignDto:
     user_id: str
@@ -36,7 +45,7 @@ class CampaignDto:
     title: str
     category: CampaignCategory
     description: str
-    product: CreateProductDto
+    product: ProductDto
     images: List[str]
 
 
@@ -46,12 +55,3 @@ class ChangeProductDto:
     name: Optional[str]
     price: Optional[Decimal]
     discoint: Optional[Decimal]
-
-
-@dataclass
-class ProductDto:
-    product_id: str
-    name: str
-    price: Decimal
-    discoint: Decimal
-    images: List[str]
