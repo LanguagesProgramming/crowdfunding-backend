@@ -8,13 +8,13 @@ class Base64SaveStorageImage:
     __MATCHER = PatternMatcher(__URL_REGEX)
     BASE = "resources/media"
     
-    def __init__(self, path: str) -> None:
-        self.__path = path
+    def __init__(self, folder_name: str) -> None:
+        self.__folder_name = folder_name
         
-    def save(self, image: str, folder_name: str) -> str:
+    def save(self, image: str) -> str:
         self.verify_base64(image)
         binary_image = base64.b64decode(image.split(",")[1])
-        image_url = f'{self.BASE}/{self.__path}/{folder_name}/{ID.generate()}.png'
+        image_url = f'{self.BASE}/{self.__folder_name}/{ID.generate()}.png'
         with open(image_url, "wb") as file:
             file.write(binary_image)
         return image_url

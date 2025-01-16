@@ -8,6 +8,7 @@ from typing import List, Optional
 from decimal import Decimal
 
 class Campaign:
+    FOLDER_NAME = "campaignImages"
     def __init__(self, id: str, userId: str, title: str, category: CampaignCategory, description: str, product: Product, goal: Decimal, current_money: Decimal, images: List[str]) -> None:
         self.id = id 
         self.userId = userId
@@ -18,24 +19,39 @@ class Campaign:
         self.goal = goal 
         self.current_money = current_money
         self.images = images
+        self.save_image = Base64SaveStorageImage(self.FOLDER_NAME)
+        self.delete_image = DeleteStorageImage()
+
 
     def change_data(self, title: Optional[str], category: Optional[CampaignCategory],
                     description: Optional[str]) -> None:
-        #TODO
+        if title is not None:
+            self.title = title
+        
+        if category is not None:
+            self.category = category
+        
+        if description is not None:
+            self.description = description
+        
         EventPublisher.add_event(ModelModifiedEvent[Campaign](self))
         return
 
     def add_current_money(self, amount: Decimal) -> None:
-        #TODO
+        self.current_money += amount
+        EventPublisher.add_event(ModelCreatedEvent[Campaign](self))
         return
     
     def add_image(self, image: str) -> None:
-        Base64SaveStorageImage.verify_base64(cls, image)
-        Base64SaveStorageImage.save(self, image, "Imagenes")
+        url = self.save_image.save(image)
+        self.images.append(url)
+        EventPublisher.add_event(ModelCreatedEvent[Campaign](self))
         return
     
+    #TODO AGREGAR EVENTO DE ELIMINAR
     def delete_image(self, image: str) -> None:
-        DeleteStorageImage.delete(self, image)
+        self.delete_image.delete(image)
+
         return
 
     def is_same_category(self, category: CampaignCategory) -> bool:

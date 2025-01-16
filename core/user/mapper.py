@@ -9,5 +9,4 @@ class UserMapper:
     
     def to_dto(self, user: User) -> UserDto:
         dto : UserDto = UserDto(user.email, user.name, user.password, user.phone_number, [CampaignMapper().to_dto(campaign) for campaign in user.campaigns])
-
         return dto
