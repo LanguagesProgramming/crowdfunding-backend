@@ -26,7 +26,7 @@ class CreateProductSerializer(serializers.Serializer):
 class CreateCampaignSerializer(serializers.Serializer):
     user_id = serializers.UUIDField()
     title = serializers.CharField()
-    category = serializers.CharField(choices = [category.value for category in CampaignCategory])
+    category = serializers.ChoiceField(choices=[(category.name, category.value) for category in CampaignCategory])
     description = serializers.CharField()
     product = CreateProductSerializer()
     images = serializers.ListField(child=serializers.CharField())
@@ -35,7 +35,7 @@ class CreateCampaignSerializer(serializers.Serializer):
 class ChangeCampaignSerializer(serializers.Serializer):
     campaign_id = serializers.UUIDField()
     title = serializers.CharField(required=False)
-    category = serializers.CharField(choices = [category.value for category in CampaignCategory], required=False)
+    category = serializers.ChoiceField(choices=[(category.name, category.value) for category in CampaignCategory], required=False)
     description = serializers.CharField(required=False)
 
 
@@ -60,9 +60,9 @@ class BuyProductSerializer(serializers.Serializer):
 
 class CampaignMediaSerializer(serializers.Serializer):
     campaign_id = serializers.UUIDField()
-    image = serializers.TextField()
+    image = serializers.CharField()
     
 
 class ProductMediaSerializer(serializers.Serializer):
     product_id = serializers.UUIDField()
-    image = serializers.TextField()
+    image = serializers.CharField()

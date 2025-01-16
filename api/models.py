@@ -1,4 +1,4 @@
-from core.campaign.category import Category 
+from core.campaign.category import CampaignCategory
 from core.user.user import User
 from core.campaign.campaign import Campaign
 from core.campaign.product import Product
@@ -30,7 +30,7 @@ class CampaignTable(models.Model):
     id = models.UUIDField(primary_key=True)
     user = models.ForeignKey(UserTable, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    category = models.CharField(max_length=25, choices=[(category.name, category.value) for category in Category])
+    category = models.CharField(max_length=25, choices=[(category.name, category.value) for category in CampaignCategory])
     description = models.TextField()
     goal = models.DecimalField(max_digits=10, decimal_places=2)
     current_money = models.DecimalField(max_digits=10, decimal_places=2)
@@ -81,7 +81,7 @@ class DonationTable(models.Model):
     
     class Meta:
         db_table = 'donation'
-        constrains = [
+        constraints = [
             models.UniqueConstraint(fields=['user', 'campaign'], name='unique_donation')
         ]
 
@@ -93,7 +93,7 @@ class PurchaseTable(models.Model):
     
     class Meta:
         db_table = 'purchase'
-        constrains = [
+        constraints = [
             models.UniqueConstraint(fields=['user', 'product'], name='unique_purchase')
         ]
         
