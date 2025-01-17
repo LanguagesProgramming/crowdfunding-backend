@@ -26,9 +26,12 @@ class Base64SaveStorageImage:
 
 
 class DeleteStorageImage:
-    def delete(self, path_name: str) -> str:
-        if not path_name.startswith(Base64SaveStorageImage.BASE):
-            path_name = Base64SaveStorageImage.BASE + '/' + path_name
+    BASE = "resources/media"
+    def __init__(self, folder_name: str) -> None:
+        self.__folder_name = folder_name
+        
+    def delete(self, name: str) -> str:
+        path_name = f'{self.BASE}/{self.__folder_name}/{name}'
         if os.path.exists(path_name):
             os.remove(path_name)
             return path_name

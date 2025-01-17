@@ -20,7 +20,7 @@ class SaveModel(EventSubscriber[ModelCreatedEvent[Model]], Generic[Model]):
     def save(self, model: Model): ...
     
     def handle(self, event: ModelCreatedEvent[Model]) -> None:
-        self.save(event.get_created_model())
+        self.save(event.get_model())
 
 
 class ExistsModel(ABC):

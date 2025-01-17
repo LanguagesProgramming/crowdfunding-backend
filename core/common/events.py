@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Type, List
+from typing import get_args
 
 E = TypeVar('E', bound='Event')
 Model = TypeVar('Model')
@@ -15,7 +16,10 @@ class EventSubscriber(Generic[E], ABC):
     def handle(self, event: E) -> None: ...
 
     def supports(self, event: E) -> bool:
-        return isinstance(event, self.__event_type)
+        if len(get_args(self.__event_type)) > 0 and isinstance(event, ModelCreatedEvent):
+            return get_args(self.__event_type)[0] == type(event.get_model())
+        else:
+            return self.__event_type == type(event)
 
 
 class EventPublisher:
@@ -42,13 +46,5 @@ class ModelCreatedEvent(Event, Generic[Model]):
     def __init__(self, created_model: Model) -> None:
         self.__created_model = created_model
     
-    def get_created_model(self) -> Model:
+    def get_model(self) -> Model:
         return self.__created_model
-
-
-class ModelModifiedEvent(Event, Generic[Model]):
-    def __init__(self, modified_model: Model) -> None:
-        self.__modified_model = modified_model
-    
-    def get_modified_model(self) -> Model:
-        return self.__modified_model

@@ -2,6 +2,7 @@ from core.common.repository import GetModel, SaveModel, ExistsModel, DeleteModel
 from core.common.events import EventPublisher, EventSubscriber
 from core.user.user import User
 from core.user.events import DonateEvent, BuyEvent
+from core.campaign.events import AddCampaignImageEvent, AddProductImageEvent, DeleteCampaignImageEvent, DeleteProductImageEvent
 from core.campaign.campaign import Campaign
 from core.campaign.product import Product
 from .models import UserTable, CampaignTable, ProductTable, DonationTable, PurchaseTable, CampaignMediaTable, ProductMediaTable
@@ -53,7 +54,6 @@ class DjangoSaveCampaign(SaveModel[Campaign]):
     def save(self, campaign: Campaign) -> None:
         campaign_table = CampaignTable.from_campaign(campaign)
         campaign_table.save()
-        #TODO save media
 
 
 class DjangoDeleteCampaign(DeleteModel[Campaign]):
@@ -82,7 +82,6 @@ class DjangoSaveProduct(SaveModel[Product]):
         product_table = ProductTable.from_product(product)
         product_table.save()
 
-
 class DjangoSaveDonation(EventSubscriber[DonateEvent]):
     def __init__(self) -> None:
         super().__init__(DonateEvent)
@@ -92,13 +91,11 @@ class DjangoSaveDonation(EventSubscriber[DonateEvent]):
         campaign_table = CampaignTable.objects.get(id=campaign_id)
         donation_table = DonationTable(user=user_table, campaign=campaign_table, amount=amount)
         donation_table.save()
-        #TODO save media
     
     def handle(self, event: DonateEvent) -> None:
-        #TODO
-        user_id = ""
-        campaign_id = ""
-        amount = Decimal(0)
+        user_id = event.user_id
+        campaign_id = event.campaign_id
+        amount = event.amount
         self.save(user_id, campaign_id, amount)
 
 
@@ -113,14 +110,76 @@ class DjangoSavePurchase(EventSubscriber[BuyEvent]):
         purchase_table.save()
     
     def handle(self, event: BuyEvent) -> None:
-        #TODO
-        user_id = ""
-        product_id = ""
+        user_id = event.user_id
+        product_id = event.product_id
         self.save(user_id, product_id)
 
+
+class DjangoSaveCampaignMedia(EventSubscriber[AddCampaignImageEvent]):
+    def __init__(self) -> None:
+        super().__init__(AddCampaignImageEvent)
+        
+    def save(self, campaign_id: str, image: str) -> None:
+        campaign_table = CampaignTable.objects.get(id=campaign_id)
+        campaign_media_table = CampaignMediaTable(campaign=campaign_table, media=image)
+        campaign_media_table.save()
+    
+    def handle(self, event: AddCampaignImageEvent) -> None:
+        campaign_id = event.campaign_id
+        image = event.image
+        self.save(campaign_id, image)
+
+
+class DjangoSaveProductMedia(EventSubscriber[AddProductImageEvent]):
+    def __init__(self) -> None:
+        super().__init__(AddProductImageEvent)
+        
+    def save(self, product_id: str, image: str) -> None:
+        product_table = ProductTable.objects.get(id=product_id)
+        product_media_table = ProductMediaTable(product=product_table, media=image)
+        product_media_table.save()
+    
+    def handle(self, event: AddProductImageEvent) -> None:
+        product_id = event.product_id
+        image = event.image
+        self.save(product_id, image)
+
+
+class DjangoDeleteCampaignMedia(EventSubscriber[DeleteCampaignImageEvent]):
+    def __init__(self) -> None:
+        super().__init__(DeleteCampaignImageEvent)
+        
+    def delete(self, campaign_id: str, image: str) -> None:
+        campaign_table = CampaignTable.objects.get(id=campaign_id)
+        campaign_media_table = CampaignMediaTable.objects.get(campaign=campaign_table, url=image)
+        campaign_media_table.delete()
+    
+    def handle(self, event: DeleteCampaignImageEvent) -> None:
+        campaign_id = event.campaign_id
+        image = event.image
+        self.delete(campaign_id, image)
+
+
+class DjangoDeleteProductMedia(EventSubscriber[DeleteProductImageEvent]):
+    def __init__(self) -> None:
+        super().__init__(DeleteProductImageEvent)
+        
+    def delete(self, product_id: str, image: str) -> None:
+        product_table = ProductTable.objects.get(id=product_id)
+        product_media_table = ProductMediaTable.objects.get(product=product_table, url=image)
+        product_media_table.delete()
+    
+    def handle(self, event: DeleteProductImageEvent) -> None:
+        product_id = event.product_id
+        image = event.image
+        self.delete(product_id, image)
 
 EventPublisher.subscribe(DjangoSaveUser())
 EventPublisher.subscribe(DjangoSaveCampaign())
 EventPublisher.subscribe(DjangoSaveProduct())
 EventPublisher.subscribe(DjangoSaveDonation())
 EventPublisher.subscribe(DjangoSavePurchase())
+EventPublisher.subscribe(DjangoSaveCampaignMedia())
+EventPublisher.subscribe(DjangoSaveProductMedia())
+EventPublisher.subscribe(DjangoDeleteCampaignMedia())
+EventPublisher.subscribe(DjangoDeleteProductMedia())

@@ -1,5 +1,6 @@
 from core.campaign.product import Product
-from core.common.events import EventPublisher, ModelCreatedEvent, ModelModifiedEvent
+from core.common.events import EventPublisher, ModelCreatedEvent
+from .events import AddCampaignImageEvent, DeleteCampaignImageEvent
 from core.common.image_storage import Base64SaveStorageImage, DeleteStorageImage
 from core.common.values import ID, StringValue
 from core.user import user
@@ -20,7 +21,7 @@ class Campaign:
         self.current_money = current_money
         self.images = images
         self.save_image = Base64SaveStorageImage(self.FOLDER_NAME)
-        self.delete_image = DeleteStorageImage()
+        self.delete_image = DeleteStorageImage(self.FOLDER_NAME)
 
 
     def change_data(self, title: Optional[str], category: Optional[CampaignCategory],
@@ -34,7 +35,7 @@ class Campaign:
         if description is not None:
             self.description = description
         
-        EventPublisher.add_event(ModelModifiedEvent[Campaign](self))
+        EventPublisher.add_event(ModelCreatedEvent[Campaign](self))
         return
 
     def add_current_money(self, amount: Decimal) -> None:
@@ -45,13 +46,13 @@ class Campaign:
     def add_image(self, image: str) -> None:
         url = self.save_image.save(image)
         self.images.append(url)
-        EventPublisher.add_event(ModelCreatedEvent[Campaign](self))
+        EventPublisher.add_event(AddCampaignImageEvent(self.id, url))
         return
     
-    #TODO AGREGAR EVENTO DE ELIMINAR
     def delete_image(self, image: str) -> None:
+        self.images.remove(image)
         self.delete_image.delete(image)
-
+        EventPublisher.add_event(DeleteCampaignImageEvent(self.id, image))
         return
 
     def is_same_category(self, category: CampaignCategory) -> bool:
@@ -64,9 +65,13 @@ class Campaign:
     def create(cls, userId: str, title: str, category: CampaignCategory, description: str, product: Product, goal: Decimal, images: List[str]) -> 'Campaign':
         id = ID.generate()
         product.campaignId = id
-        campaign = cls(id, userId, title, category, description, product, goal, Decimal(0), images)
+        campaign = cls(id, userId, title, category, description, product, goal, Decimal(0), [])
         EventPublisher.add_event(ModelCreatedEvent[Campaign](campaign))
         EventPublisher.add_event(ModelCreatedEvent[Product](product))
+        for image in images:
+            campaign.add_image(image)
+        for image in product.base64_images.copy():
+            product.add_image(image)
         return campaign
     
     @classmethod

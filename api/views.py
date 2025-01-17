@@ -1,4 +1,3 @@
-from typing import Optional
 from core.user.services import UserService
 from core.campaign.services import CampaignService
 from core.campaign.category import CampaignCategory
@@ -52,18 +51,25 @@ class CampaignApi(APIView):
     
     @validate(CreateCampaignSerializer)
     def post(self, request: Request):
+        request.data['category'] = CampaignCategory(request.data['category'])
         campaign = campaign_service.create_campaign(CreateCampaignDto(**request.data))
-        return success_response(asdict(campaign))
+        data = asdict(campaign)
+        data['category'] = campaign.category.name
+        return success_response(data)
     
     @validate(ChangeCampaignSerializer)
     def put(self, request: Request):
         campaign = campaign_service.change_campaign_data(ChangeCampaignDto(**request.data))
-        return success_response(asdict(campaign))
+        data = asdict(campaign)
+        data['category'] = campaign.category.name
+        return success_response(data)
     
     @validate()
     def delete(self, campaign_id: str):
         campaign = campaign_service.delete_campaign(campaign_id)
-        return success_response(asdict(campaign))
+        data = asdict(campaign)
+        data['category'] = campaign.category.name
+        return success_response(data)
 
 
 class ProductApi(APIView):

@@ -1,4 +1,4 @@
-from core.common.events import EventPublisher, ModelCreatedEvent, ModelModifiedEvent
+from core.common.events import EventPublisher, ModelCreatedEvent
 from core.campaign.campaign import Campaign
 from core.common.values import ID
 from .events import DonateEvent, BuyEvent
@@ -29,7 +29,7 @@ class User:
         if phone_number is not None:
             self.phone_number = phone_number
         
-        EventPublisher.add_event(ModelModifiedEvent[User](self))
+        EventPublisher.add_event(ModelCreatedEvent[User](self))
         return
     
     def donate(self, campaign: Campaign, amount: Decimal) -> None:
