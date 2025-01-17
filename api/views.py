@@ -44,10 +44,14 @@ class UserApi(APIView):
 
 
 class CampaignApi(APIView):
-    def get(self, name: str, category: CampaignCategory):
-        campaigns = campaign_service.filter_campaigns(name, category)
-        data = [asdict(campaign) for campaign in campaigns]
-        return success_response(data)
+    def get(self, request, name: str, category: str, *args, **kwargsname):
+        campaigns = campaign_service.filter_campaigns(name, CampaignCategory(category))
+        datas = []
+        for campaign in campaigns:
+            data = asdict(campaign)
+            data['category'] = campaign.category.name
+            datas.append(data)
+        return success_response(datas)
     
     @validate(CreateCampaignSerializer)
     def post(self, request: Request):

@@ -28,7 +28,7 @@ class CampaignService:
 
     def filter_campaigns(self, title: Optional[str], category: Optional[CampaignCategory]) -> list[CampaignDto]:
         campaigns = self.__get_campaign.get_all() 
-
+        print(title, type(category), "AAAAAAAAAA")
         if category != None:
             campaigns = [campaign for campaign in campaigns if campaign.is_same_category(category)]
 
