@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from dataclasses import asdict
 from decimal import Decimal
+from typing import Optional
 
 user_service = UserService(
         get_user=DjangoGetUser(),
@@ -50,8 +51,10 @@ class UserApi(APIView):
 
 
 class CampaignApi(APIView):
-    def get(self, request, name: str, category: str, *args, **kwargsname):
-        campaigns = campaign_service.filter_campaigns(name, CampaignCategory(category))
+    def get(self, request, name: Optional[str] = None, category: Optional[str] = None, *args, **kwargs):
+        if category is not None:
+            category = CampaignCategory(category)
+        campaigns = campaign_service.filter_campaigns(name, category)
         datas = []
         for campaign in campaigns:
             data = asdict(campaign)
@@ -69,7 +72,15 @@ class CampaignApi(APIView):
     
     @validate(ChangeCampaignSerializer)
     def put(self, request: Request):
-        campaign = campaign_service.change_campaign_data(ChangeCampaignDto(**request.data))
+        category = request.data.get('category')
+        if category is not None:
+            category = CampaignCategory(category)
+        campaign = campaign_service.change_campaign_data(ChangeCampaignDto(
+            campaign_id=request.data['campaign_id'],
+            title=request.data.get('title'),
+            category=category,
+            description=request.data.get('description')
+        ))
         data = asdict(campaign)
         data['category'] = campaign.category.name
         return success_response(data)
