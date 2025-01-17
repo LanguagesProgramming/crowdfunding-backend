@@ -31,7 +31,7 @@ class UserTable(models.Model):
             name=user_table.name,
             password=user_table.password,
             phone_number=user_table.phone,
-            campaigns=CampaignTable.objects.filter(user=user_table)
+            campaigns=[CampaignTable.to_campaign(campaign_table) for campaign_table in CampaignTable.objects.filter(user=user_table)]
         )
         return user
 
@@ -118,9 +118,6 @@ class DonationTable(models.Model):
     
     class Meta:
         db_table = 'donation'
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'campaign'], name='unique_donation')
-        ]
 
 
 class PurchaseTable(models.Model):
@@ -130,9 +127,6 @@ class PurchaseTable(models.Model):
     
     class Meta:
         db_table = 'purchase'
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'product'], name='unique_purchase')
-        ]
         
 
 class CampaignMediaTable(models.Model):

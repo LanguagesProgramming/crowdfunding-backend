@@ -35,13 +35,13 @@ class User:
     def donate(self, campaign: Campaign, amount: Decimal) -> None:
         campaign.add_current_money(amount)
         user_id = self.user_id
-        campaign_id = campaign.campaign_id
+        campaign_id = campaign.id
         EventPublisher.add_event(DonateEvent(user_id, campaign_id, amount))
         return
     
     def buy(self, campaign: Campaign) -> None:
         product = campaign.product
-        campaign.add_current_money(product.price)
+        campaign.add_current_money(product.price*(1-product.discount))
         user_id = self.user_id
         product_id = product.id
         EventPublisher.add_event(BuyEvent(user_id, product_id))

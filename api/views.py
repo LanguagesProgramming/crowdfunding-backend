@@ -88,7 +88,10 @@ class DonationApi(APIView):
     def post(self, request: Request):
         data = request.data
         user = user_service.donate(data['user_id'], data['campaign_id'], Decimal(data['amount']))
-        return success_response(asdict(user))
+        data = asdict(user)
+        for campaign in data['campaigns']:
+            campaign['category'] = campaign['category'].name
+        return success_response(data)
 
 
 class BuyApi(APIView):
@@ -96,7 +99,11 @@ class BuyApi(APIView):
     def post(self, request: Request):
         data = request.data
         user = user_service.buy(data['user_id'], data['campaign_id'])
-        return success_response(asdict(user))
+        data = asdict(user)
+        for campaign in data['campaigns']:
+            campaign['category'] = campaign['category'].name
+        return success_response(data)
+
 
 
 class CampaignMediaApi(APIView):

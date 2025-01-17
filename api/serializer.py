@@ -48,15 +48,14 @@ class ChangeProductSerializer(serializers.Serializer):
     
     
 class DonationSerializer(serializers.Serializer):
-    user_id = serializers.UUIDField()
+    user_id = serializers.CharField()
     campaign_id = serializers.UUIDField()
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     
 
 class BuyProductSerializer(serializers.Serializer):
-    user_id = serializers.UUIDField()
+    user_id = serializers.CharField()
     campaign_id = serializers.UUIDField()
-    price = serializers.DecimalField(max_digits=10, decimal_places=2)
     
 
 class CampaignMediaSerializer(serializers.Serializer):

@@ -12,6 +12,6 @@ urlpatterns = [
     path('product', ProductApi.as_view()),
     path('product/media', ProductMediaApi.as_view()),
     path('product/media/<str:product_id>/<str:image>', ProductMediaApi.as_view()),
-    path('user/donate', DonationApi.as_view()),
-    path('user/buy', BuyApi.as_view()),
+    path('donate', DonationApi.as_view()),
+    path('buy', BuyApi.as_view()),
 ]
