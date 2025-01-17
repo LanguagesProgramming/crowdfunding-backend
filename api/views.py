@@ -30,7 +30,10 @@ class UserApi(APIView):
     @validate()
     def get(self, request, user_id: str, *args, **kwargs):
         user = user_service.find_user(user_id)
-        return success_response(asdict(user))
+        data = asdict(user)
+        for campaign in data['campaigns']:
+            campaign['category'] = campaign['category'].name
+        return success_response(data)
         
     @validate(CreateUserSerializer)
     def post(self, request: Request):
@@ -40,7 +43,10 @@ class UserApi(APIView):
     @validate(ChangeUserSerializer)
     def put(self, request: Request):
         user = user_service.change_user_data(ChangeUserDto(**request.data))
-        return success_response(asdict(user))
+        data = asdict(user)
+        for campaign in data['campaigns']:
+            campaign['category'] = campaign['category'].name
+        return success_response(data)
 
 
 class CampaignApi(APIView):
