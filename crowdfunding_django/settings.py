@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'crowdfunding_django.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/crowdfunding',
+        default='postgresql://local:local@localhost:5432/crowdfunding',
         conn_max_age=600
     )
 }
