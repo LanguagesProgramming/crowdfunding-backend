@@ -29,12 +29,21 @@ campaign_service = CampaignService(
 
 class UserApi(APIView):
     @validate()
-    def get(self, request, user_id: str, *args, **kwargs):
-        user = user_service.find_user(user_id)
-        data = asdict(user)
-        for campaign in data['campaigns']:
-            campaign['category'] = campaign['category'].name
-        return success_response(data)
+    def get(self, request, user_id: Optional[str] = None, *args, **kwargs):
+        if user_id is not None:
+            user = user_service.find_user(user_id)
+            data = asdict(user)
+            for campaign in data['campaigns']:
+                campaign['category'] = campaign['category'].name
+            return success_response(data)
+        users = user_service.get_all()
+        datas = []
+        for user in users:
+            data = asdict(user)
+            for campaign in data['campaigns']:
+                campaign['category'] = campaign['category'].name
+            datas.append(data)
+        return success_response(datas)
         
     @validate(CreateUserSerializer)
     def post(self, request: Request):
@@ -112,10 +121,16 @@ class DonationApi(APIView):
 
 
 class BuyApi(APIView):
+    @validate()
+    def get(self, request, user_id: str, *args, **kwargs):
+        purchases = campaign_service.get_purchases(user_id)
+        datas = [asdict(purchase) for purchase in purchases]
+        return success_response(datas)
+    
     @validate(BuyProductSerializer)
     def post(self, request: Request):
         data = request.data
-        user = user_service.buy(data['user_id'], data['campaign_id'])
+        user = user_service.buy(data['user_id'], data['campaign_id'], int(data['stock']))
         data = asdict(user)
         for campaign in data['campaigns']:
             campaign['category'] = campaign['category'].name

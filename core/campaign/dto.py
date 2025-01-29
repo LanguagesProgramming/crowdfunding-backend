@@ -59,3 +59,10 @@ class ChangeProductDto:
     name: Optional[str]
     price: Optional[Decimal]
     discount: Optional[Decimal]
+
+@dataclass
+class PurchaseDto:
+    product: ProductDto
+    user_id: str
+    stock: int
+    price: Decimal

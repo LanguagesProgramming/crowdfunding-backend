@@ -21,7 +21,6 @@ class ChangeUserDto:
 
 @dataclass
 class UserDto:
-    user_id: str
     email: str
     name: str
     phone_number: str

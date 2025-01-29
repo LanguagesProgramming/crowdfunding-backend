@@ -1,10 +1,12 @@
-from core.campaign import campaign
+from core.common.repository import GetModel
 from core.common.events import EventPublisher, ModelCreatedEvent
 from .events import AddProductImageEvent, DeleteProductImageEvent
 from core.common.image_storage import Base64SaveStorageImage, DeleteStorageImage
 from core.common.values import ID, StringValue
 from decimal import Decimal
 from typing import List, Optional
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 class Product:
     FOLDER_NAME = "productImages"
@@ -54,3 +56,15 @@ class Product:
     def load(cls, id: str, name: str, price: Decimal, discount: Decimal, campaignId: str, images: List[str]) -> 'Product':
         product: Product = cls(id, name, price, discount, campaignId, images)
         return product
+
+
+@dataclass
+class Purchase:
+    user_id: str
+    product_id: str
+    stock: int
+    price: Decimal
+    
+class GetProduct(GetModel[Product], ABC):
+    @abstractmethod
+    def get_purchases(self, user_id: str) -> List[Purchase]: ...

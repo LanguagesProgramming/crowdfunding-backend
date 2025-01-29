@@ -2,14 +2,15 @@ from typing import Optional
 from core.common.events import EventPublisher
 from core.common.repository import DeleteModel, GetModel
 from .campaign import Campaign
-from .product import Product
+from .product import GetProduct
 from .category import CampaignCategory
-from .dto import CreateCampaignDto, CampaignDto, ChangeCampaignDto, ProductDto, ChangeProductDto
+from .dto import CreateCampaignDto, CampaignDto, ChangeCampaignDto, ProductDto, ChangeProductDto, PurchaseDto
 from .mapper import CampaignMapper, ProductMapper
+from typing import List
 
 class CampaignService:
     def __init__(self, get_campaign: GetModel[Campaign], delete_campaign: DeleteModel[Campaign],
-                 get_product: GetModel[Product]) -> None:
+                 get_product: GetProduct) -> None:
         self.__mapper = CampaignMapper()
         self.__product_mapper = ProductMapper()
         self.__get_product = get_product
@@ -71,3 +72,16 @@ class CampaignService:
         product.delete_image(image)
         EventPublisher.publish()
         return self.__product_mapper.to_dto(product)
+    
+    def get_purchases(self, user_id: str) -> List[PurchaseDto]:
+        purchases = self.__get_product.get_purchases(user_id)
+        user_purchases = []
+        for purchase in purchases:
+            product = self.__get_product.get(purchase.product_id)
+            user_purchases.append(PurchaseDto(
+                user_id=user_id,
+                product = self.__product_mapper.to_dto(product),
+                stock=purchase.stock,
+                price=purchase.price
+            ))
+        return user_purchases
