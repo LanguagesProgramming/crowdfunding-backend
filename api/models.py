@@ -26,7 +26,6 @@ class UserTable(models.Model):
     @classmethod
     def to_user(cls, user_table: 'UserTable') -> User:
         user = User.load(
-            user_id=user_table.email,
             email=user_table.email,
             name=user_table.name,
             password=user_table.password,

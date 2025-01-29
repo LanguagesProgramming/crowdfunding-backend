@@ -8,8 +8,7 @@ from decimal import Decimal
 from .values import UserPassword, UserEmail, UserName, UserPhoneNumber
 
 class User:
-    def __init__(self, user_id: str, email: str, name: str, password: str, phone_number: str, campaigns: List[Campaign]) -> None:
-        self.user_id = ID(user_id).get_value()
+    def __init__(self, email: str, name: str, password: str, phone_number: str, campaigns: List[Campaign]) -> None:
         self.email = UserEmail(email).get_value()
         self.name = UserName(name).get_value()
         self.password = UserPassword(password).get_value()
@@ -54,12 +53,12 @@ class User:
 
     @classmethod
     def create(cls, email: str, name: str, password: str, phone_number: str) -> 'User':
-        user: User = cls(ID.generate(), email, name, password, phone_number, [])
+        user: User = cls(email, name, password, phone_number, [])
         EventPublisher.add_event(ModelCreatedEvent[User](user))
         return user
     
     @classmethod
-    def load(cls, user_id: str, email: str, name: str, password: str, phone_number: str, campaigns: List[Campaign]) -> 'User':
-        user: User = cls(user_id, email, name, password, phone_number, campaigns)
+    def load(cls,email: str, name: str, password: str, phone_number: str, campaigns: List[Campaign]) -> 'User':
+        user: User = cls(email, name, password, phone_number, campaigns)
         user : User
         return user
