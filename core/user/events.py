@@ -9,6 +9,8 @@ class DonateEvent(Event):
 
 
 class BuyEvent(Event):
-    def __init__(self, user_id: str, product_id: str) -> None:
+    def __init__(self, user_id: str, product_id: str, stock: int, price: int) -> None:
         self.user_id = user_id
         self.product_id = product_id
+        self.stock = stock
+        self.price = price

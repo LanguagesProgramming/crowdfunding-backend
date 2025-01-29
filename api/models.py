@@ -124,6 +124,7 @@ class PurchaseTable(models.Model):
     user = models.ForeignKey(UserTable, on_delete=models.CASCADE)
     product = models.ForeignKey(ProductTable, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.IntegerField()
     
     class Meta:
         db_table = 'purchase'

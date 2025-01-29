@@ -56,6 +56,7 @@ class DonationSerializer(serializers.Serializer):
 class BuyProductSerializer(serializers.Serializer):
     user_id = serializers.CharField()
     campaign_id = serializers.UUIDField()
+    stock = serializers.IntegerField()
     
 
 class CampaignMediaSerializer(serializers.Serializer):

@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-^2txp@^q-qv%miw019wnz$u_8vtym*^4wkzh*@$lm!48n-=)k3
 DEBUG = True
 
 ALLOWED_HOSTS = ['mysite-4ln3.onrender.com']
-
+#ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -88,7 +88,12 @@ DATABASES = {
     )
 }
 
-
+'''DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}'''
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

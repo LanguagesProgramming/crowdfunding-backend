@@ -4,7 +4,7 @@ from core.user.user import User
 from core.user.events import DonateEvent, BuyEvent
 from core.campaign.events import AddCampaignImageEvent, AddProductImageEvent, DeleteCampaignImageEvent, DeleteProductImageEvent
 from core.campaign.campaign import Campaign
-from core.campaign.product import Product
+from core.campaign.product import Product, GetProduct, Purchase
 from .models import UserTable, CampaignTable, ProductTable, DonationTable, PurchaseTable, CampaignMediaTable, ProductMediaTable
 from decimal import Decimal
 from typing import List
@@ -62,7 +62,7 @@ class DjangoDeleteCampaign(DeleteModel[Campaign]):
         campaign_table.delete()
 
 
-class DjangoGetProduct(GetModel[Product]):
+class DjangoGetProduct(GetProduct):
     def get(self, product_id: str) -> Product:
         product_table = ProductTable.objects.get(id=product_id)
         product = ProductTable.to_product(product_table)
@@ -73,6 +73,13 @@ class DjangoGetProduct(GetModel[Product]):
         products = [ProductTable.to_product(product_table) for product_table in product_tables]
         return products
 
+    def get_purchases(self, user_id: str) -> List[Purchase]:
+        purchase_table = PurchaseTable.objects.filter(user__email=user_id)
+        purchases = []
+        for table in purchase_table:
+            purchase = Purchase(table.user.email, table.product.id, table.stock, table.price)
+            purchases.append(purchase)
+        return purchases
 
 class DjangoSaveProduct(SaveModel[Product]):
     def __init__(self) -> None:
@@ -103,16 +110,19 @@ class DjangoSavePurchase(EventSubscriber[BuyEvent]):
     def __init__(self) -> None:
         super().__init__(BuyEvent)
         
-    def save(self, user_id: str, product_id: str) -> None:
+    def save(self, user_id: str, product_id: str, stock: int, price: int) -> None:
         user_table = UserTable.objects.get(email=user_id)
         product_table = ProductTable.objects.get(id=product_id)
-        purchase_table = PurchaseTable(user=user_table, product=product_table, price=product_table.price)
+        purchase_table = PurchaseTable(user=user_table, product=product_table, price=price,
+                                       stock=stock)
         purchase_table.save()
     
     def handle(self, event: BuyEvent) -> None:
         user_id = event.user_id
         product_id = event.product_id
-        self.save(user_id, product_id)
+        stock = event.stock
+        price = event.price
+        self.save(user_id, product_id, stock, price)
 
 
 class DjangoSaveCampaignMedia(EventSubscriber[AddCampaignImageEvent]):

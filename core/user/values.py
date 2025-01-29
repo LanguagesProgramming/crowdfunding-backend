@@ -1,6 +1,7 @@
 from core.common.values import PatternMatcher, StringValue
 from .exceptions import (InvalidUserNameException, InvalidUserEmailException, InvalidUserPasswordException,
                          InvalidPhoneNumberException)
+import bcrypt
 
 class UserName:
     __REGREX = "^(?=.{4,16}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$"
@@ -53,14 +54,15 @@ class UserPassword:
             raise InvalidUserPasswordException.invalid_password(self.get_value())
     
     @classmethod
-    def decode(cls, password: str) -> str:
-        #TODO
-        return password
+    def verify(cls, password: str, hashed: str) -> bool:
+        password_bytes = password.encode()
+        return bcrypt.checkpw(password_bytes, hashed.encode())
     
     @classmethod
     def encode(cls, password: str) -> str:
-        #TODO
-        return password
+        password_bytes = password.encode()
+        hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt(12))
+        return hashed.decode()
     
     def get_value(self) -> str:
         return self.__value
