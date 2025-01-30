@@ -28,8 +28,8 @@ SECRET_KEY = 'django-insecure-^2txp@^q-qv%miw019wnz$u_8vtym*^4wkzh*@$lm!48n-=)k3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mysite-4ln3.onrender.com']
-#ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = ['mysite-4ln3.onrender.com']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -81,19 +81,19 @@ WSGI_APPLICATION = 'crowdfunding_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://local:local@localhost:5432/crowdfunding',
         conn_max_age=600
     )
-}
+}'''
 
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-}'''
+}
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
