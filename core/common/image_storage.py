@@ -15,6 +15,9 @@ class Base64SaveStorageImage:
         self.verify_base64(image)
         binary_image = base64.b64decode(image.split(",")[1])
         image_url = f'{self.BASE}/{self.__folder_name}/{ID.generate()}.png'
+        directory = os.path.dirname(image_url)
+        os.makedirs(directory, exist_ok=True)
+
         with open(image_url, "wb") as file:
             file.write(binary_image)
         return image_url
